@@ -1,0 +1,20 @@
+image:
+  repository: jchat/identity
+  tag: dev
+  pullPolicy: IfNotPresent
+
+service:
+  port: 8091
+
+env:
+  SERVER_PORT: "8091"
+  SPRING_DATASOURCE_URL: "jdbc:postgresql://pg-postgresql:5432/jchat"
+  SPRING_DATASOURCE_USERNAME: "jchat"
+  # пароль БД НЕ указываем здесь — берём из секрета pg-auth
+  SPRING_KAFKA_BOOTSTRAP_SERVERS: "kafka:9092"
+  KEYCLOAK_BASE_URL: "http://keycloak:8080"
+  KEYCLOAK_REALM: "app"
+  KEYCLOAK_CLIENT_ID: "identity-service"
+  SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: "http://keycloak:8080/realms/app"
+
+resources: {}

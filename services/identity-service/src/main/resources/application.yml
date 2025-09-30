@@ -1,0 +1,33 @@
+server:
+  port: 8091
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/jchat
+    username: postgres
+    password: dev
+  jpa:
+    hibernate.ddl-auto: validate
+    properties:
+      hibernate.jdbc.time_zone: UTC
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+    enabled: true
+management:
+  endpoints.web.exposure.include: health,info,prometheus
+  metrics.tags.application: identity-service
+
+keycloak:
+  base-url: http://localhost:8081
+  realm: app
+  client-id: identity-service
+  client-secret: change-me
+  # optional: realm public key to validate tokens if needed
+
+security:
+  resource-server:
+    issuer-uri: http://localhost:8081/realms/app

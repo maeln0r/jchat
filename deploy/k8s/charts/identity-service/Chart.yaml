@@ -1,0 +1,5 @@
+apiVersion: v2
+name: identity-service
+description: Identity microservice
+version: 0.1.0
+type: application

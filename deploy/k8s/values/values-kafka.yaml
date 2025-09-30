@@ -1,0 +1,18 @@
+kraft:
+  enabled: true
+
+broker:
+  replicaCount: 1
+
+controller:
+  replicaCount: 1
+
+zookeeper:
+  enabled: false
+
+persistence:
+  enabled: false
+
+listeners:
+  client:
+    protocol: PLAINTEXT

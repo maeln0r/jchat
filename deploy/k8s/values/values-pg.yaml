@@ -1,0 +1,8 @@
+auth:
+  username: jchat
+  existingSecret: pg-auth   # секрет с паролем
+  database: jchat
+
+primary:
+  persistence:
+    enabled: false

@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: jchat
+resources:
+  - namespace.yaml
+  - secrets/pg-auth.yaml
+  - secrets/kc-pg-auth.yaml
+  - secrets/identity-secrets.yaml
+  - secrets/keycloak-admin.yaml
+configMapGenerator:
+  - name: kc-realm-app
+    namespace: jchat
+    files:
+      - realm-export.json=keycloak/realm-app/realm-export.json
+generatorOptions:
+  disableNameSuffixHash: true

@@ -1,0 +1,8 @@
+auth:
+  username: keycloak
+  existingSecret: kc-pg-auth   # секрет с паролем
+  database: keycloak
+
+primary:
+  persistence:
+    enabled: false
