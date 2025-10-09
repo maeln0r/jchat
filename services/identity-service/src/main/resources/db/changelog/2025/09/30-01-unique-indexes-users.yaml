@@ -1,0 +1,31 @@
+databaseChangeLog:
+  - changeSet:
+      id: 30-01-users-ensure-not-null
+      author: maeln0r
+      changes:
+        - addNotNullConstraint:
+            tableName: users
+            columnName: email
+            columnDataType: varchar(320)
+        - addNotNullConstraint:
+            tableName: users
+            columnName: kc_id
+            columnDataType: varchar(64)
+
+  - changeSet:
+      id: 30-02-users-uk-email
+      author: maeln0r
+      changes:
+        - addUniqueConstraint:
+            tableName: users
+            columnNames: email
+            constraintName: uk_users_email
+
+  - changeSet:
+      id: 30-03-users-uk-kc-id
+      author: maeln0r
+      changes:
+        - addUniqueConstraint:
+            tableName: users
+            columnNames: kc_id
+            constraintName: uk_users_kc_id

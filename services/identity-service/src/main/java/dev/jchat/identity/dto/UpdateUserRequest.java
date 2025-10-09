@@ -1,6 +1,6 @@
 package dev.jchat.identity.dto;
 
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotBlank;
 
 import java.util.UUID;
 

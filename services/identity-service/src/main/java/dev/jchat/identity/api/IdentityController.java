@@ -20,25 +20,25 @@ public class IdentityController {
     }
 
     @PostMapping("/users")
-    @PreAuthorize("hasRole('admin') or hasAuthority('SCOPE_manage')")
+    @PreAuthorize("hasRole('ADMIN') or hasAuthority('SCOPE_MANAGE')")
     public UUID create(@RequestBody @Valid CreateUserRequest req) {
         return service.createUser(req);
     }
 
     @PatchMapping("/users/{id}")
-    @PreAuthorize("hasRole('admin') or hasAuthority('SCOPE_manage')")
+    @PreAuthorize("hasRole('ADMIN') or hasAuthority('SCOPE_MANAGE')")
     public void update(@PathVariable UUID id, @RequestBody @Valid UpdateUserRequest req) {
         service.updateUser(id, req);
     }
 
     @PostMapping("/users/{id}/roles")
-    @PreAuthorize("hasRole('admin')")
+    @PreAuthorize("hasRole('ADMIN')")
     public void roles(@PathVariable UUID id, @RequestBody @Valid AssignRolesRequest req) {
         service.assignRoles(id, req);
     }
 
     @PostMapping("/users/{id}/deactivate")
-    @PreAuthorize("hasRole('admin')")
+    @PreAuthorize("hasRole('ADMIN')")
     public void deactivate(@PathVariable UUID id) {
         service.deactivate(id);
     }

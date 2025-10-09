@@ -2,32 +2,42 @@ server:
   port: 8091
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/jchat
-    username: postgres
-    password: dev
+    url: jdbc:postgresql://pg-postgres.jchat.svc.cluster.local:5432/${POSTGRES_DB}
+    username: ${USERDB_USER}
+    password: ${USERDB_PASSWORD}
   jpa:
     hibernate.ddl-auto: validate
     properties:
       hibernate.jdbc.time_zone: UTC
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS}
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yaml
     enabled: true
+#  security:
+#    oauth2:
+#      resourceserver:
+#        jwt:
+#          issuer-uri: ${SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI}
 management:
   endpoints.web.exposure.include: health,info,prometheus
   metrics.tags.application: identity-service
 
-keycloak:
-  base-url: http://localhost:8081
-  realm: app
-  client-id: identity-service
-  client-secret: change-me
-  # optional: realm public key to validate tokens if needed
+logging:
+  level:
+    root: ${LOGGING_LEVEL_ROOT:INFO}
+    org.springframework: ${LOGGING_LEVEL_ORG_SPRINGFRAMEWORK:INFO}
+    org.springframework.boot: ${LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_BOOT:INFO}
+    org.hibernate.SQL: ${ORG_HIBERNATE_SQL:INFO}
+    org.hibernate.type.descriptor.sql.BasicBinder: ${ORG_HIBERNATE_TYPE_DESCRIPTOR_SQL_BASICBINDER:INFO}
 
-security:
-  resource-server:
-    issuer-uri: http://localhost:8081/realms/app
+
+keycloak:
+  base-url: ${KEYCLOAK_BASE_URL}
+  realm: ${KEYCLOAK_REALM}
+  client-id: ${KEYCLOAK_CLIENT_ID}
+  client-secret: ${KEYCLOAK_CLIENT_SECRET}
+  # optional: realm public key to validate tokens if needed

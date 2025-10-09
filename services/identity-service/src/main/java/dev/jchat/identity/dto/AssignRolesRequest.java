@@ -1,6 +1,6 @@
 package dev.jchat.identity.dto;
 
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotEmpty;
 
 import java.util.List;
 

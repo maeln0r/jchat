@@ -7,14 +7,25 @@ service:
   port: 8091
 
 env:
-  SERVER_PORT: "8091"
-  SPRING_DATASOURCE_URL: "jdbc:postgresql://pg-postgresql:5432/jchat"
-  SPRING_DATASOURCE_USERNAME: "jchat"
-  # пароль БД НЕ указываем здесь — берём из секрета pg-auth
-  SPRING_KAFKA_BOOTSTRAP_SERVERS: "kafka:9092"
-  KEYCLOAK_BASE_URL: "http://keycloak:8080"
+  # Kafka (Strimzi bootstrap внутри кластера)
+  SPRING_KAFKA_BOOTSTRAP_SERVERS: "kafka-kafka-bootstrap.jchat.svc.cluster.local:9092"
+
+  # Keycloak — внутренний сервис (не ingress)
+  KEYCLOAK_BASE_URL: "http://keycloak-service.jchat.svc.cluster.local:8080"
   KEYCLOAK_REALM: "app"
   KEYCLOAK_CLIENT_ID: "identity-service"
-  SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: "http://keycloak:8080/realms/app"
+  # Секрет клиента приходит из secret/identity-secrets ключом KEYCLOAK_CLIENT_SECRET (envFrom)
+
+  # JWT-проверка (без зависимости от ingress/tunnel):
+  # Если используешь jwk-set-uri — закомментируй issuer-uri в приложении
+  # SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: "http://keycloak:8080/realms/app"
+  SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI: "http://keycloak-service.jchat.svc.cluster.local:8080/realms/app/protocol/openid-connect/certs"
+
+  LOGGING_LEVEL_ROOT: "DEBUG"
+  LOGGING_LEVEL_ORG_SPRINGFRAMEWORK: "DEBUG"
+  LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_BOOT: "DEBUG"
+  ORG_HIBERNATE_SQL: "DEBUG"
+  ORG_HIBERNATE_TYPE_DESCRIPTOR_SQL_BASICBINDER: "TRACE"
+
 
 resources: {}

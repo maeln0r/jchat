@@ -11,6 +11,8 @@ java { toolchain { languageVersion.set(JavaLanguageVersion.of(21)) } }
 repositories { mavenCentral() }
 
 dependencies {
+    implementation(project(":libs:error-spring-boot-starter"))
+
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-security")

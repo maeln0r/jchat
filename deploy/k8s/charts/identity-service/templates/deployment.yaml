@@ -18,28 +18,23 @@ spec:
       initContainers:
         - name: wait-for-pg
           image: busybox:1.36
-          command: ['sh','-c','until nc -z pg-postgresql 5432; do echo waiting for pg; sleep 2; done']
+          command: [ 'sh','-c','until nc -z pg-postgres 5432; do echo waiting for pg; sleep 2; done' ]
       containers:
         - name: app
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy | default "IfNotPresent" }}
           ports:
-            - containerPort: 8091
+            - containerPort: {{ .Values.service.port | default 8091 }}
+          envFrom:
+            - secretRef:
+                name: pg-auth
+            - secretRef:
+                name: identity-secrets
           env:
             {{- range $k, $v := .Values.env }}
-            - name: {{ $k }}
-              value: "{{ $v }}"
+              - name: {{ $k }}
+                value: "{{ $v }}"
             {{- end }}
-            - name: SPRING_DATASOURCE_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: pg-auth
-                  key: password
-            - name: KEYCLOAK_CLIENT_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: identity-secrets
-                  key: KEYCLOAK_CLIENT_SECRET
           readinessProbe:
             httpGet:
               path: /actuator/health

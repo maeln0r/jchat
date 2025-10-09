@@ -11,7 +11,10 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 @Configuration
 @EnableMethodSecurity
@@ -25,23 +28,30 @@ public class SecurityConfig {
 
         JwtAuthenticationConverter conv = new JwtAuthenticationConverter();
         conv.setJwtGrantedAuthoritiesConverter(jwt -> {
-            Collection<GrantedAuthority> auths = new ArrayList<>();
-            // realm roles
-            var realm = (Map<String, Object>) jwt.getClaim("realm_access");
+            Set<GrantedAuthority> auths = new HashSet<>();
+
+            Map<String, Object> realm = jwt.getClaim("realm_access");
             if (realm != null && realm.get("roles") instanceof Collection<?> roles) {
                 roles.forEach(r -> auths.add(new SimpleGrantedAuthority("ROLE_" + r)));
             }
-            // client roles (example: app-api)
-            var ra = (Map<String, Object>) jwt.getClaim("resource_access");
-            if (ra != null && ra.get("identity-service") instanceof Map<?, ?> client) {
-                var cr = (Collection<?>) ((Map<?, ?>) client).get("roles");
-                if (cr != null) cr.forEach(r -> auths.add(new SimpleGrantedAuthority("SCOPE_" + r)));
+
+            Map<String, Object> ra = jwt.getClaim("resource_access");
+            if (ra != null) {
+                Object clientBlock = ra.get("identity-service");
+                if (clientBlock instanceof Map<?, ?> cb) {
+                    Object cr = cb.get("roles");
+                    if (cr instanceof Collection<?> roles) {
+                        roles.forEach(r -> auths.add(new SimpleGrantedAuthority("SCOPE_" + r)));
+                    }
+                }
             }
-            // plus default scope converter
+
             JwtGrantedAuthoritiesConverter def = new JwtGrantedAuthoritiesConverter();
             auths.addAll(def.convert(jwt));
+
             return auths;
         });
+
 
         http.oauth2ResourceServer(oauth -> oauth.jwt(j -> j.jwtAuthenticationConverter(conv)));
         return http.build();

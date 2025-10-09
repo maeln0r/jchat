@@ -1,0 +1,49 @@
+apiVersion: k8s.keycloak.org/v2alpha1
+kind: Keycloak
+metadata:
+  name: keycloak
+  namespace: jchat
+  labels:
+    app.kubernetes.io/name: keycloak
+    app.kubernetes.io/part-of: identity
+spec:
+  # Кол-во реплик (для dev — 1)
+  instances: 1
+
+  # Хостнейм и ингресс. Оставляем общий ingress-класс nginx
+  http:
+    httpEnabled: true
+  hostname:
+    hostname: keycloak.jchat.local
+    strict: false
+
+  ingress:
+    enabled: false
+
+  # Бутстрап-админ
+  bootstrapAdmin:
+    user:
+      secret: kc-admin-auth
+
+  # Внешняя БД Postgres. Сохраняем текущие секреты kc-pg-auth
+  db:
+    vendor: postgres
+    host: kc-pg-postgres
+    port: 5432
+    database: keycloak
+    usernameSecret:
+      name: kc-pg-auth
+      key: USERDB_USER
+    passwordSecret:
+      name: kc-pg-auth
+      key: USERDB_PASSWORD
+
+  additionalOptions:
+    - name: proxy
+      value: edge
+    - name: proxy-headers
+      value: xforwarded
+    - name: hostname-strict
+      value: "false"
+    - name: http-enabled
+      value: "true"

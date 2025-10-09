@@ -1,23 +1,24 @@
 package dev.jchat.identity.service;
 
-import dev.jchat.identity.entity.UserEntity;
 import dev.jchat.identity.dto.AssignRolesRequest;
 import dev.jchat.identity.dto.CreateUserRequest;
 import dev.jchat.identity.dto.UpdateUserRequest;
-import dev.jchat.identity.repository.UserRepository;
+import dev.jchat.identity.entity.UserEntity;
 import dev.jchat.identity.events.*;
+import dev.jchat.identity.repository.UserRepository;
 import dev.jchat.identity.util.Tracing;
 import jakarta.ws.rs.core.Response;
 import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.RoleResource;
-import org.keycloak.representations.idm.*;
+import org.keycloak.representations.idm.RoleRepresentation;
+import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.List;
 import java.util.UUID;
 
 @Service

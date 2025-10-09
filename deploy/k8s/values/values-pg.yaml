@@ -1,8 +1,29 @@
-auth:
-  username: jchat
-  existingSecret: pg-auth   # секрет с паролем
-  database: jchat
+image:
+  registry: "docker.io"
+  repository: "postgres"
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "17.6"
 
-primary:
-  persistence:
-    enabled: false
+# Настройки PostgreSQL
+settings:
+  existingSecret: pg-auth     # имя секрета
+  superuser:
+    secretKey: POSTGRES_USER
+  superuserPassword:
+    secretKey: POSTGRES_PASSWORD
+
+# Одна прикладная БД и пользователь (для identity-service)
+userDatabase:
+  existingSecret: pg-auth
+  name:
+    secretKey: POSTGRES_DB
+  user:
+    secretKey: USERDB_USER
+  password:
+    secretKey: USERDB_PASSWORD
+
+# Сервис останется ClusterIP:5432; его DNS = имя релиза (pg-postgresql)
+service:
+  type: ClusterIP
+  port: 5432

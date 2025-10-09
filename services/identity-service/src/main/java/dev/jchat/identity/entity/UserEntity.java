@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.time.Instant;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -29,13 +30,26 @@ public class UserEntity {
     @Column(name = "is_active")
     private boolean active = true;
     @Column(name = "created_at", nullable = false)
-    private Instant createdAt = Instant.now();
+    private Instant createdAt;
     @Column(name = "updated_at", nullable = false)
-    private Instant updatedAt = Instant.now();
+    private Instant updatedAt;
+
+    @PrePersist
+    void onCreate() {
+        Instant now = Instant.now();
+        this.createdAt = now;
+        this.updatedAt = now;
+        normalizeEmail();
+    }
 
     @PreUpdate
-    void preUpdate() {
+    void onUpdate() {
         this.updatedAt = Instant.now();
+        normalizeEmail();
+    }
+
+    private void normalizeEmail() {
+        if (email != null) email = email.trim().toLowerCase(Locale.ROOT);
     }
 
     @Override
